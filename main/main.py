@@ -44,7 +44,6 @@ def get_stamina_address(base_address, offsets):
         windll.kernel32.ReadProcessMemory(process_handle, c_uint64(buffer.value + offsets[i]), byref(buffer), sizeof(buffer), None)
 
     found_stamina_address = buffer.value + offsets[4]
-
     print(f"[!] stamina found [{hex(found_stamina_address)}]")
 
     return found_stamina_address
@@ -54,20 +53,18 @@ def get_stamina():
 
     stamina_buffer = c_float()
     windll.kernel32.ReadProcessMemory(process_handle, c_uint64(stamina_address), byref(stamina_buffer), sizeof(stamina_buffer), None)
-
     return stamina_buffer.value
 
 if not win32gui.FindWindow(None, "Stardew Valley") != 0:
-    
     win32api.MessageBox(0, "stardew valley not found", "error")
     exit()
-
+    
 pid = win32process.GetWindowThreadProcessId(win32ui.FindWindow(None, "Stardew Valley").GetSafeHwnd())[1]
 process_handle = windll.kernel32.OpenProcess(0x1F0FFF, False, int(pid))
 stamina_address = get_stamina_address(find_coreclr_address(), [0xB0, 0x1CC, 0x18, 0x360, 0xA8C])
 
 while True:
-
+    
     current_stamina = get_stamina()
 
     if 0 < current_stamina < stamina_threshold:
